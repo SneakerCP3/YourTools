@@ -19,21 +19,34 @@ Simple tool to make work more efficient, a DIY tool based on uTools: http://www.
 ## Use：
 
 Alt+Space或Space+Alt    ： 唤醒工具窗口
+
 ESC			： 清空窗口内容或隐藏工具窗口
+
 鼠标悬停在输入框          ： 显示命令提示
+
 Enter                   :  根据窗口输入的命令执行，命令下发成功后窗口会自动隐藏
+
 Delete+Delete           ： 彻底退出程序
+
 工具窗口右上角关闭按钮    ： 彻底退出程序
 
 
 ## BulitIn instructions：
 
 etime 	   ：打开etime网页
+
 daily 	   ：打开Arche看板，ERL看板，DS看板
+
 cn002 	   ：打开红网Terminal Server网页
+
 kanban	   ：打开Arche看板
+
 b_    	   ：使用Bing进行搜索,b_后面加需要搜索的关键字
+
 bd_   	   ：使用百度进行搜索,bd_后面加需要搜索的关键字
+
 h_	   ：打开HMI看板中的某个workitem, h_后面加需要打开的workitem ID
+
 t_    	   ：打开TIA看板中的某个workitem, t_后面加需要打开的workitem ID
+
 shutdown   : 关机
