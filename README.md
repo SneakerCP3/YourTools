@@ -17,6 +17,7 @@ Simple tool to make work more efficient, a DIY tool based on uTools
 
 	
 使用及快捷键：
+
 Alt+Space或Space+Alt    ： 唤醒工具窗口
 ESC				        ： 清空窗口内容或隐藏工具窗口
 鼠标悬停在输入框        ： 显示命令提示
@@ -26,6 +27,7 @@ Delete+Delete           ： 彻底退出程序
 
 
 内置指令说明：
+
 etime ：打开etime网页
 daily ：打开Arche看板，ERL看板，DS看板
 cn002 ：打开红网Terminal Server网页
