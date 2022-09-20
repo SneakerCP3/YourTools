@@ -17,9 +17,10 @@ tkinter: gui window
 ## Configuration(optional)：
 - 打开utool_conf.ini，在对应的section下面添加指令
 - section说明：
+  [settings]    	 窗口设置
   [website]    	 打开一个或多个网页，不同网页换行区分
   [local_file] 	   打开一个或多个本地文件或文件夹，不同文件或文件夹换行区分
-  [query]		   需要根据用户的输入打开自定义界面(不要更改)
+  [query]		   需要根据用户的输入打开自定义界面，以{query}代替关键字
   [cmd]		    打开系统指令，目前只集成了关机命令(最好不要更改，有些系统指令会阻塞程序)
 
     
@@ -29,25 +30,17 @@ tkinter: gui window
 
 - ESC： 清空窗口内容或隐藏工具窗口
 
-- 鼠标悬停在输入框  ： 显示命令提示
+- 鼠标悬停在输入框  ： 显示命令提示（可配置）
 
 - Enter :  根据窗口输入的命令执行，命令下发成功后窗口会自动隐藏
 
-- Delete+Delete  ： 彻底退出程序
+- Shift+End  ： 彻底退出程序
 
 - 工具窗口右上角关闭按钮    ： 彻底退出程序
 
 
 
 ## BulitIn instructions：
-
-- etime  ：打开etime网页
-
-- daily ：打开Arche看板，ERL看板，DS看板
-
-- cn002 ：打开红网Terminal Server网页
-
-- kanban：打开Arche看板
 
 - b_ ：使用Bing进行搜索,b_后面加需要搜索的关键字
 
