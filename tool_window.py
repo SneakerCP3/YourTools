@@ -15,6 +15,8 @@ import os
 from pynput.keyboard import Listener, Key
 
 from read_write_config import get_values
+from read_write_config import get_setting_value as get_settings
+from read_write_config import get_query_value as get_query
 
 
 class KeyboardListener:
@@ -33,26 +35,27 @@ class KeyboardListener:
         if self.pre_key:
             if key == Key.space and self.pre_key[-1] == Key.alt_l:
                 self.app.max_window()
-                # print("Wake")
 
             elif key == Key.alt_l and self.pre_key[-1] == Key.space:
                 self.app.max_window()
-                # print("Wake")
 
             elif key == Key.esc:
                 self.app.min_window()
-                # print("Sleep")
 
             elif key == Key.enter and app.root.state() == "normal":
                 self.app.execute_cmd()
-                # print("Run")
 
-            elif key == Key.delete and self.pre_key[-1] == Key.delete:
-                self.app.quit()
+            elif key == Key.end and self.pre_key[-1] == Key.shift:
+                # self.app.quit()
+                self.app.root.destroy()
+
+            elif key == Key.end and self.pre_key[-1] == Key.shift_r:
+                print("exit")
+                # self.app.quit()
+                self.app.root.destroy()
 
         self.pre_key.append(key)
         # print(f"{key}:{self.pre_key[-1]}")
-        # print(app.root.state())
 
 
 class Window(tk.Frame):
@@ -60,27 +63,27 @@ class Window(tk.Frame):
         super().__init__(root)
         self.root = root
         self.root.title("Your tool")
-        self.root.attributes("-alpha", 1.0)
         self.root.attributes("-toolwindow", True)
+        self.init_settings()
         self.root.attributes("-topmost", True)
-        # self.root["background"] = "#009999"
 
         self.pack()
         self.show_window_in_center()
-        # self.root.overrideredirect(True)
+
         # self.root.resizable(False, False)
         self.text = tk.StringVar()
         self.tool_tip_text = tk.StringVar()
         self.all_commands = self.format_cmd_list()
         self.init_window()
 
+
     def show_window_in_center(self):
         '''
         窗口弹出位置设定
         :return:
         '''
-        width = 800
-        height = 50
+        width = 700
+        height = 80
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
         # print(screen_height)
@@ -88,17 +91,34 @@ class Window(tk.Frame):
         self.root.geometry(size)
 
 
+    def init_settings(self):
+        displayHeader, bgColor, alpha = get_settings("displayHeader").strip(), get_settings("bgColor").strip(), get_settings("alpha").strip()
+        if displayHeader != "1":
+            # 只有当这个值为1的时候才会显示关闭按钮
+            self.root.overrideredirect(True)
+
+        if bgColor:
+            self.theme_color = bgColor
+            self.root["background"] = self.theme_color
+
+        if alpha:
+            self.root.attributes("-alpha", alpha)
+
+
     def init_window(self):
 
-        main_area = tk.Frame(self)
-        # main_area = tk.Frame(self, background="#009999")
-        _font = font.Font(family='Microsoft YaHei UI', size=15)
+        main_area = tk.Frame(self, background=self.theme_color)
+        # main_area = tk.Frame(self)
+        _font = font.Font(family='Microsoft YaHei UI', size=16)
 
-        self.entry = tk.Entry(main_area, width=63, justify="left", border=0, font=_font, textvariable=self.text)
+        self.entry = tk.Entry(main_area, width=55, justify="left", border=0, font=_font, textvariable=self.text)
         self.entry.focus_set()
-        self.entry.bind("<Enter>", self.show_tooltip)
-        self.entry.bind("<Leave>", self.hide_tooltip)
-        self.entry.pack(pady=10, ipady=10)
+
+        isDisplayToolTip = get_settings("displayToolTip")
+        if isDisplayToolTip == "1":
+            self.entry.bind("<Enter>", self.show_tooltip)
+            self.entry.bind("<Leave>", self.hide_tooltip)
+        self.entry.pack(pady=11, ipady=12)
         main_area.pack()
 
 
@@ -108,7 +128,7 @@ class Window(tk.Frame):
 
         x, y, cx, cy = self.entry.bbox("insert")
         x = x + self.entry.winfo_rootx()
-        y = y + cy + self.entry.winfo_rooty() + 40
+        y = y + cy + self.entry.winfo_rooty() + 65
         self.tool_tip_window.geometry("+%d+%d" % (x, y))
 
         self.tool_tip = tk.Label(self.tool_tip_window, textvariable=self.tool_tip_text, justify="left",
@@ -144,11 +164,6 @@ class Window(tk.Frame):
 
 
     def execute_cmd(self):
-        # TODO 根据不同的输入值来区分执行如下操作
-        # 打开网页
-        # Query
-        # 本地文件及文件夹
-        # 系统命令，优先级低
 
         cmd = self.text.get().strip()
         query_items_prefix= tuple(get_values("query").keys())
@@ -161,38 +176,29 @@ class Window(tk.Frame):
                 self.open_web(site)
                 self.min_window()
 
-        if cmd in self.local_files:
-            for file in self.all_commands[cmd]:
-                self.open_local_file(file)
-                self.min_window()
+        try:
+            if cmd in self.local_files:
+                for file in self.all_commands[cmd]:
+                    self.open_local_file(file)
+                    self.min_window()
+        except OSError:
+            self.min_window()
+
 
         if cmd in self.sys_cmd:
             for site in self.all_commands[cmd]:
                 os.system(site)
                 self.min_window()
 
-        if cmd.startswith("b_"):
-            site = f"https://cn.bing.com/search?q={cmd[2:]}"
-            self.open_web(site)
-            self.min_window()
 
-        if cmd.startswith("t_"):
-            # TIA portal workitems
-            site = f"https://jupiter.tfs.siemens.net/tfs/TIA/TIA%20Portal/_workitems/edit/{cmd[2:]}"
-            self.open_web(site)
-            self.min_window()
-
-        if cmd.startswith("h_"):
-            # HMI VS workitems
-            site = f"https://jupiter.tfs.siemens.net/tfs/IPS/VS%20HMI-Panel/_workitems/edit/{cmd[2:]}"
-            self.open_web(site)
-            self.min_window()
-
-        if cmd.startswith("bd_"):
-            # baidu
-            site = f"https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd={cmd[3:]}"
-            self.open_web(site)
-            self.min_window()
+        if cmd.startswith(query_items_prefix):
+            for item in query_items_prefix:
+                if cmd.startswith(item):
+                    key_word = cmd[len(item):]
+                    url = get_query(item).replace("{query}", key_word)
+                    self.open_web(url)
+                    self.min_window()
+                    break
 
         self.min_window()
 
