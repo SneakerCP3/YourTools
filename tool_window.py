@@ -12,11 +12,13 @@ from collections import deque
 import webbrowser
 import os
 
-from pynput.keyboard import Listener, Key
+from pynput.keyboard import Listener
+from pynput.keyboard import Key
 
 from read_write_config import get_values
 from read_write_config import get_setting_value as get_settings
 from read_write_config import get_query_value as get_query
+from window_handle import get_targer_window
 
 
 class KeyboardListener:
@@ -107,19 +109,18 @@ class Window(tk.Frame):
 
     def init_window(self):
 
-        main_area = tk.Frame(self, background=self.theme_color)
-        # main_area = tk.Frame(self)
+        self.main_area = tk.Frame(self, background=self.theme_color)
         _font = font.Font(family='Microsoft YaHei UI', size=16)
 
-        self.entry = tk.Entry(main_area, width=55, justify="left", border=0, font=_font, textvariable=self.text)
-        self.entry.focus_set()
+        self.entry = tk.Entry(self.main_area, width=55, justify="left", border=0, font=_font, textvariable=self.text)
 
         isDisplayToolTip = get_settings("displayToolTip")
         if isDisplayToolTip == "1":
             self.entry.bind("<Enter>", self.show_tooltip)
             self.entry.bind("<Leave>", self.hide_tooltip)
+        self.entry.focus_set()
         self.entry.pack(pady=11, ipady=12)
-        main_area.pack()
+        self.main_area.pack()
 
 
     def show_tooltip(self, event):
@@ -205,7 +206,7 @@ class Window(tk.Frame):
 
     def max_window(self):
         self.root.deiconify()
-        self.entry.focus_set()
+        get_targer_window()
 
 
     def min_window(self):
@@ -226,6 +227,9 @@ class Window(tk.Frame):
 
 
 
+
+
+
 if __name__ == '__main__':
     root = tk.Tk()
     app = Window(root)
@@ -236,6 +240,3 @@ if __name__ == '__main__':
     listen_thread.start()
 
     app.mainloop()
-
-
-
