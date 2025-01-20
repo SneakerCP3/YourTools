@@ -51,3 +51,6 @@ tkinter: gui window
 - t_    ：打开TIA看板中的某个workitem, t_后面加需要打开的workitem ID
 
 - shutdown   : 关机
+
+## Package
+- 打包的时候需要将utool_conf.ini也打包进去，使用pyinstaller
