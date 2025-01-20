@@ -166,7 +166,7 @@ class Window(tk.Frame):
 
     def execute_cmd(self):
 
-        cmd = self.text.get().strip()
+        cmd = self.text.get().strip().lower()
         query_items_prefix= tuple(get_values("query").keys())
 
         if cmd not in self.all_commands.keys() and not cmd.startswith(query_items_prefix):
